@@ -200,8 +200,10 @@ gcp-iam-least-privilege-project/
     ├── storage-upload-success.png
     ├── authorized-access.png
     ├── permission-denied.png
-    └── writer-read-access.png
+    ├── writer-read-access.png
+    └── cloud-audit-logs.png
 ```
+
 
 ## Expected Outcomes and Achievements
 
