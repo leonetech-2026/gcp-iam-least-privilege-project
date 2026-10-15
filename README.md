@@ -22,7 +22,7 @@ The IAM Reader service account is assigned read-only access, while the IAM Write
 
 Testing was performed using Google Cloud Shell and service account impersonation to verify successful operations and permission-denied behavior.
 
-**Project Status:** IAM configuration and core storage permission tests completed. Evidence is documented through screenshots and Cloud Shell command outputs. Cloud Audit Logs verification is not yet documented.
+**Project Status:** IAM configuration, service account permissions, Cloud Storage access testing, and Cloud Audit Logs verification have been completed. Evidence is documented through screenshots and Google Cloud Shell command outputs. All seven documented test cases passed.
 
 ## Project Objectives
 
@@ -91,6 +91,13 @@ Two service accounts were configured with separate responsibilities.
 | IAM Writer | Storage Object User | Read, list, and upload storage objects |
 
 The roles were assigned to the Cloud Storage bucket.
+
+### Administrative Access and Least Privilege Scope
+
+This project demonstrates least privilege through two service accounts with distinct Cloud Storage permissions. The IAM Reader uses the Storage Object Viewer role, while the IAM Writer uses the Storage Object User role.
+
+The IAM policy evidence also includes broader administrative permissions assigned to other project principals. These administrative permissions are separate from the service account permissions tested in this project. The demonstrated least privilege enforcement applies specifically to the Reader and Writer service accounts accessing the selected Cloud Storage bucket.
+
 
 The bucket configuration includes:
 
@@ -228,12 +235,11 @@ gcp-iam-least-privilege-project/
 - Remove temporary lab resources when the assignment is complete.
 
 ## Project Limitations
+This project demonstrates IAM access restrictions for a selected Cloud Storage bucket. It does not represent a complete production security deployment.
 
 The Google Cloud Console dashboard requires authentication and appropriate IAM permissions.
 
-Cloud Audit Logs availability depends on the service and audit-log configuration. Log verification has not yet been documented.
-
-The project demonstrates IAM access restrictions for a selected Cloud Storage bucket. It does not represent a complete production security deployment.
+Cloud Audit Logs verification was completed using Google Cloud Logs Explorer. A total of 26 relevant audit log records were retrieved, including IAM policy operations, Cloud Storage permission updates, and service account access-token generation events. Audit log availability depends on the Google Cloud service and logging configuration.
 
 ## Conclusion
 
