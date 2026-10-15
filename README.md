@@ -133,7 +133,7 @@ The tests verified that:
 | IAM Writer uploads object | Upload succeeds | Passed |
 | IAM Writer lists objects | Read permitted | Passed |
 | IAM role verification | Assigned roles visible | Passed |
-| Cloud Audit Logs review | Relevant events visible if enabled | Not yet verified |
+| Cloud Audit Logs review | Relevant events visible if enabled | Passed |
 
 ## Evidence and Screenshots
 
@@ -176,6 +176,16 @@ The IAM Writer successfully uploaded a test file to the Cloud Storage bucket usi
 The IAM Writer successfully listed objects stored in the Cloud Storage bucket.
 
 ![Writer Read Access](./screenshots/writer-read-access.png)
+
+### Evidence 7: Cloud Audit Logs Verification
+
+Google Cloud Logs Explorer was used to review security-related activities. The review returned 26 audit log records, including IAM policy changes, Cloud Storage permission updates, and service account access-token generation events.
+
+The SetIAMPolicy audit record confirms that Google Cloud recorded an IAM policy operation.
+
+**Result:** Passed. Relevant administrative audit logs were successfully retrieved.
+
+![Cloud Audit Logs Verification](./screenshots/cloud-audit-logs.png)
 
 ## Repository Structure
 
