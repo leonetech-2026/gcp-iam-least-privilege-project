@@ -1,191 +1,261 @@
+
 # GCP IAM Least Privilege Security Project
-**Security Project on Google Cloud IAM and Service Accounts**
 
-## Links to Project
-- **GitHub Repository:** [View Project Repo](https://github.com/leonetech-2026/gcp-iam-least-privilege-project)
-- **GCP Working Environment:** Google Cloud Project Dashboard [https://console.cloud.google.com/home/dashboard?project=gcp-iam-least-privilege]- **Architecture Diagram:** [Security Architecture](https://github.com/leonetech-2026/gcp-iam-least-privilege-project/blob/main/diagram.png)
-- **Presentation Slides** [Project Presentation](https://docs.google.com/presentation/d/1xm9LhcoWYKnEH3b6ag9PGbShNFfTFLrX/edit?usp=sharing&ouid=102980885387166603628&rtpof=true&sd=true)
+**Google Cloud IAM and Service Accounts Security Project**
 
-**Note:** The Google Cloud dashboard is for authorized access only. It’s not something the public can use. Access to presentations is governed by sharing permissions set in Google Drive.
+## Project Links
 
-# Project Summary
+- **GitHub Repository:** [View Project Repository](https://github.com/leonetech-2026/gcp-iam-least-privilege-project)
+- **GCP Working Environment:** [Google Cloud Project Dashboard](https://console.cloud.google.com/home/dashboard?project=gcp-iam-least-privilege)
+- **Architecture Diagram:** [View Security Architecture](https://github.com/leonetech-2026/gcp-iam-least-privilege-project/blob/main/diagram.png)
+- **Presentation Slides:** [View Project Presentation](https://docs.google.com/presentation/d/1xm9LhcoWYKnEH3b6ag9PGbShNFfTFLrX/edit?usp=sharing&ouid=102980885387166603628&rtpof=true&sd=true)
 
-This project illustrates how Google Cloud Platform (GCP) Identity and Access Management (IAM) secures cloud resources according to the **principle of least privilege**.
+**Note:** The Google Cloud dashboard requires authorized access. It is not a publicly accessible application. Presentation access depends on Google Drive sharing permissions.
 
-The project demonstrates how to handle secure access using Google Cloud Storage, IAM policies, and two service accounts with different access rights.
+## Project Overview
 
-IAM Reader service account is granted read-only access IAM Writer service account is granted permissions to read and upload storage objects
+This project demonstrates how Google Cloud Platform (GCP) Identity and Access Management (IAM) protects cloud resources through the **principle of least privilege**.
 
-We ran tests on Google Cloud Shell using service account impersonation to verify correct operation and permission-denied behavior.
+The project uses Google Cloud Storage, IAM policies, and two service accounts with different permissions to demonstrate secure access management.
 
-**Project Status:** IAM configuration, permissions for the service account, tested Cloud Storage access, verified Cloud Audit Logs Evidence is provided in the form of screenshots and command outputs from Google Cloud Shell. All 7 recorded test cases passed successfully.
+The IAM Reader service account is assigned read-only access, while the IAM Writer service account is assigned permissions to read and upload storage objects.
 
-### Project Objectives
+Testing was performed using Google Cloud Shell and service account impersonation to verify successful operations and permission-denied behavior.
 
-- Understand IAM principals, roles, permissions and policies.
-- Set up access with pre-defined roles with restricted permissions.
-- enforce the principle of least privilege.
-- Properly configure service accounts.
-- Test allowed reads and writes.
-- Verify limitations on unauthorized access.
-- Document configurations and security testing evidence
+**Project Status:** IAM configuration, service account permissions, Cloud Storage access testing, and Cloud Audit Logs verification have been completed. Evidence is documented through screenshots and Google Cloud Shell command outputs. All seven documented test cases passed.
 
-## Technologies and Services | Technology | Purpose | |---|---|---| | Google Cloud Platform | Cloud computing environment | | Cloud IAM | Access control and role assignments | | Service Accounts | Separate Reader and Writer identities | | Google Cloud Storage | Storage resource for testing | | Google Cloud Shell | Command-line configuration and testing | | Service Account Impersonation | Test permissions without downloading keys | | Cloud Audit Logs | Review supported administrative and access events | | GitHub | Version control and project documentation |
+## Project Objectives
 
-## Security architecture!![GCP IAM Security Architecture](./diagram.png)
+- Understand IAM principals, roles, permissions, and policies.
+- Configure access using predefined roles with limited permissions.
+- Implement the principle of least privilege.
+- Configure secure service accounts.
+- Test authorized read and write operations.
+- Verify unauthorized access restrictions.
+- Document configurations and security testing evidence.
 
-The architecture depicts the interaction between the Google Cloud environment, the IAM Reader, the IAM Writer, and the secured Cloud Storage bucket.
+## Technologies and Services
 
-The IAM Reader has read-only access. The IAM Writer can do authorized reads and writes.
-**Security principle:** Users and service accounts are granted only the permissions they need to perform their job functions.
+| Technology | Purpose |
+| --- | --- |
+| Google Cloud Platform | Cloud computing environment |
+| Cloud IAM | Access control and role assignments |
+| Service Accounts | Separate Reader and Writer identities |
+| Google Cloud Storage | Storage resource for testing |
+| Google Cloud Shell | Command-line configuration and testing |
+| Service Account Impersonation | Test permissions without downloading keys |
+| Cloud Audit Logs | Review supported administrative and access events |
+| GitHub | Version control and project documentation |
 
-##Plan of implementation and activities undertaken
+## Security Architecture
 
-### Step 1: Create the Google Cloud Project
+![GCP IAM Security Architecture](./diagram.png)
 
-1. Log into the Google Cloud Console.
-2. Choose the project `gcp-iam-least-privilege`.
-3. Check billing and budget settings.
-4. Set up Google Cloud Shell for the project.
-5. Identify the bucket for testing in Cloud Storage.
+The architecture illustrates the interaction between the Google Cloud environment, the IAM Reader, the IAM Writer, and the secured Cloud Storage bucket.
 
-**Project ID:** `gcp-iam-minimum-privilege`
-** Storage Bucket: gcp-iam-least-privilege-2026-demo
+The IAM Reader has read-only access, while the IAM Writer can perform authorized read and write operations.
 
-**S3 Bucket Region:** `US-EAST-1`
+**Security principle:** Users and service accounts receive only the permissions necessary to perform their assigned responsibilities.
+
+## Implementation Plan and Completed Activities
+
+### Step 1: Prepare the Google Cloud Project
+
+1. Sign in to the Google Cloud Console.
+2. Select the project `gcp-iam-least-privilege`.
+3. Review billing and budget settings.
+4. Configure Google Cloud Shell for the project.
+5. Identify the Cloud Storage bucket used for testing.
+
+**Project ID:** `gcp-iam-least-privilege`
+
+**Storage Bucket:** `gcp-iam-least-privilege-2026-demo`
+
+**Bucket Region:** `US-EAST1`
 
 ### Step 2: Review IAM Access
 
 1. Open IAM & Admin > IAM.
-2. Review the principals and their assigned roles.
-3. Determine the storage permissions needed.
-4. Confirm IAM Reader and IAM Writer role assignments.
-5. Review the bucket IAM policy in Google Cloud Shell. ### Step 3: Configure least privilege
+2. Review principals and their assigned roles.
+3. Identify the required storage permissions.
+4. Verify the IAM Reader and IAM Writer role assignments.
+5. Review the bucket IAM policy using Google Cloud Shell.
 
-We created two service accounts with different responsibilities. | Service account | IAM role | Access | |---|---|---| | IAM Reader | Storage Object Viewer | Read and list storage objects | | IAM Writer | Storage Object User | Read, list and upload storage objects |
+### Step 3: Configure Least Privilege
 
-The roles were added to the Cloud Storage bucket.
+Two service accounts were configured with separate responsibilities.
 
-This project shows least privilege, with two service accounts that have different permissions on Cloud Storage. The IAM Reader uses the Storage Object Viewer role and the IAM Writer uses the Storage Object User role.
+| Service Account | IAM Role | Access |
+| --- | --- | --- |
+| IAM Reader | Storage Object Viewer | Read and list storage objects |
+| IAM Writer | Storage Object User | Read, list, and upload storage objects |
 
-The IAM policy evidence also has broader administrative permissions for other project principals. These administrative permissions are different from the service account permissions tested in this project. The demonstrated least privilege enforcement is for Reader and Writer service accounts to access the selected Cloud Storage bucket .
+The roles were assigned to the Cloud Storage bucket.
+
+### Administrative Access and Least Privilege Scope
+
+This project demonstrates least privilege through two service accounts with distinct Cloud Storage permissions. The IAM Reader uses the Storage Object Viewer role, while the IAM Writer uses the Storage Object User role.
+
+The IAM policy evidence also includes broader administrative permissions assigned to other project principals. These administrative permissions are separate from the service account permissions tested in this project. The demonstrated least privilege enforcement applies specifically to the Reader and Writer service accounts accessing the selected Cloud Storage bucket.
 
 
-The bucket set-up includes:
-- Uniform bucket-level access turned on
-- Enforced public access prevention.
-- Default Storage Class.
-- Keys that are managed by Google
+The bucket configuration includes:
 
-#### Step 4: Review Service Account Security
+- Uniform bucket-level access enabled.
+- Public access prevention enforced.
+- Standard storage class.
+- Google-managed encryption keys.
 
-1. Go to IAM & Admin > Service Accounts.
-2. Check that the Reader and Writer service accounts exist.
-3. Verify permissions.
-4. Make sure that no service accounts require downloaded private keys to test.
-5. Set up authorized service account impersonation.
+### Step 4: Review Service Account Security
 
-The first attempt to impersonate failed because the user being tested did not have the necessary Service Account Token Creator permission.
+1. Open IAM & Admin > Service Accounts.
+2. Verify that the Reader and Writer service accounts exist.
+3. Review their assigned permissions.
+4. Verify that the service accounts do not require downloaded private keys for testing.
+5. Configure authorized service account impersonation.
 
-Testing was successful once the correct permissions for impersonation were set up.
+An initial impersonation attempt was denied because the testing user lacked the required Service Account Token Creator permission.
 
-### Step 5: Check Access
+After the appropriate impersonation permissions were configured, testing proceeded successfully.
 
-Operations with the configured service account identities were tested with Cloud Shell.
+### Step 5: Validate Access
 
-The tests indicated that:
+Cloud Shell was used to test operations under the configured service account identities.
 
-- Storage operation authorized, successful.- IAM Reader can list storage objects.
-- The IAM Reader was unable to upload a new object.
-- IAM Writer could upload objects.- IAM Writer could list storage objects.
+The tests verified that:
 
-## Test Results | Test Case | Expected Outcome | Actual Outcome | |---|---|---| | Authorized storage upload | Upload should succeed | Pass | | IAM Reader can list objects | Read should be permitted | Pass | | IAM Reader uploads object | Permission should be denied | Pass | | IAM Writer uploads object | Upload should succeed | Pass | | IAM Writer can list objects | Read should be permitted | Pass | | IAM role check | Assigned roles should be visible | Pass | | Cloud Audit Logs review | Relevant events should be visible if enabled | Pass |
+- Authorized storage operations succeeded.
+- The IAM Reader could list storage objects.
+- The IAM Reader could not upload a new object.
+- The IAM Writer could upload objects.
+- The IAM Writer could list storage objects.
 
-## Screenshots and Proof
+## Testing Results
 
-The following screenshots are for IAM configuration and test activities.
+| Test Case | Expected Result | Actual Result |
+| --- | --- | --- |
+| Authorized storage upload | Upload succeeds | Passed |
+| IAM Reader lists objects | Read permitted | Passed |
+| IAM Reader uploads object | Permission denied | Passed |
+| IAM Writer uploads object | Upload succeeds | Passed |
+| IAM Writer lists objects | Read permitted | Passed |
+| IAM role verification | Assigned roles visible | Passed |
+| Cloud Audit Logs review | Relevant events visible if enabled | Passed |
+
+## Evidence and Screenshots
+
+The following screenshots document the IAM configuration and testing activities.
 
 ### Evidence 1: IAM Role Assignments
 
-This screenshot shows the IAM configuration that controls who can access the Google Cloud environment.[IAM Role Assignments](screenshots/iam-role-assignments.png)
+This screenshot shows the IAM configuration used to manage access to the Google Cloud environment.
 
-#### Evidence 2: Service Account Configuration
+![IAM Role Assignments](./screenshots/iam-role-assignments.png)
 
-This screenshot shows the IAM Reader and IAM Writer service accounts that are set up for the project. ![Service Account Configuration](./screenshots/service-account-configuration.png)
+### Evidence 2: Service Account Configuration
 
-### Proof 3: Successfully uploaded to storage
+This screenshot shows the IAM Reader and IAM Writer service accounts configured for the project.
 
-The test file was uploaded to the Cloud Storage bucket successfully, with an authorized identity.[Storage Upload Success](./screenshots/storage-upload-success.png)
+![Service Account Configuration](./screenshots/service-account-configuration.png)
 
-### Evidence 4: Access denied
+### Evidence 3: Successful Storage Upload
 
-The IAM Reader tried to upload a file, but was denied because it didn't have the `storage.objects.create` permission.
+A test file was successfully uploaded to the Cloud Storage bucket using an authorized identity.
 
-This demonstrates least privilege enforcement.[Permission Denied](./screenshots/permission-denied.png)
+![Storage Upload Success](./screenshots/storage-upload-success.png)
 
-### Proof 5: Access to Writer Granted
+### Evidence 4: Permission Denied
 
-The IAM Writer successfully uploaded a test file to the Cloud Storage bucket using service account impersonation.[Authorized Access](./screenshots/authorized_access.png)
+The IAM Reader attempted to upload a file but was denied because it lacked the `storage.objects.create` permission.
 
-### Evidence 6: Access to Writer Read
+This demonstrates the enforcement of least privilege.
 
-The IAM Writer could list the objects in the bucket in Cloud Storage.[Writer Read Access](./screenshots/writer-read-access.png)
+![Permission Denied](./screenshots/permission-denied.png)
 
-### Evidence 7: Verification of Cloud Audit Logs
+### Evidence 5: Authorized Writer Access
 
-We examined security-related activities using Google Cloud Logs Explorer. The review found 26 audit log records of IAM policy changes, Cloud Storage permission changes, and service account access-token generation events.
+The IAM Writer successfully uploaded a test file to the Cloud Storage bucket using service account impersonation.
 
-SetIAMPolicy The SetIAMPolicy audit record indicates that Google Cloud logged an IAM policy operation.
+![Authorized Access](./screenshots/authorized-access.png)
 
-**Result**: Passed Relevant admin audit logs were successfully retrieved.[Cloud Audit Logs Validation](./screenshots/cloud-audit-logs-validation.png)
+### Evidence 6: Writer Read Access
 
-## Repository layout ```text gcp-iam-least-privilege-project/ ├── README.md ├── diagram.png
-└── screenshots/ README.md iam-role-assignments.png service-account-configuration.png storage-upload-success.png
+The IAM Writer successfully listed objects stored in the Cloud Storage bucket.
+
+![Writer Read Access](./screenshots/writer-read-access.png)
+
+### Evidence 7: Cloud Audit Logs Verification
+
+Google Cloud Logs Explorer was used to review security-related activities. The review returned 26 audit log records, including IAM policy changes, Cloud Storage permission updates, and service account access-token generation events.
+
+The SetIAMPolicy audit record confirms that Google Cloud recorded an IAM policy operation.
+
+**Result:** Passed. Relevant administrative audit logs were successfully retrieved.
+
+![Cloud Audit Logs Verification](./screenshots/cloud-audit-logs.png)
+
+## Repository Structure
+
+```text
+gcp-iam-least-privilege-project/
+├── README.md
+├── diagram.png
+└── screenshots/
+    ├── README.md
+    ├── iam-role-assignments.png
+    ├── service-account-configuration.png
+    ├── storage-upload-success.png
     ├── authorized-access.png
-    ├── permission-denied.png ├── writer-read-access.png
+    ├── permission-denied.png
+    ├── writer-read-access.png
     └── cloud-audit-logs.png
+```
 
 
-## Expected Results and Outcomes
+## Expected Outcomes and Achievements
 
-- IAM role assignments recorded.- Create separate service accounts for the Reader and the Writer.
-- Validated authorized Cloud Storage operations.- Showed permisssion denied behavior.
-- Enforcement of least privilege confirmed.
+- Documented IAM role assignments.
+- Configured separate Reader and Writer service accounts.
+- Verified authorized Cloud Storage operations.
+- Demonstrated permission-denied behavior.
+- Confirmed least privilege enforcement.
 - Documented security architecture.
-- Evidence of cloud security testing documented.
+- Captured evidence of cloud security testing.
 
-### Security considerations
+## Security Best Practices
 
-- Grant only the permissions needed to perform assigned tasks.
-- Different roles should have different identities.
-- Do not give Owner and Editor permissions unnecessarily.
-- Prefer service account impersonation to downloadable keys.
-- Allow for the avoidance of public access where appropriate.
-Regularly review IAM policies.
-- Use Cloud Audit Logs for security investigations where applicable.- Never post any private keys, access tokens or credentials
-- Clean up temporary lab resources once the assignment is finished.
+- Grant only the permissions required for assigned tasks.
+- Use separate identities for different responsibilities.
+- Avoid unnecessary Owner and Editor permissions.
+- Prefer service account impersonation over downloadable keys.
+- Enable public access prevention where appropriate.
+- Review IAM policies regularly.
+- Use Cloud Audit Logs for supported security investigations.
+- Never publish private keys, access tokens, or credentials.
+- Remove temporary lab resources when the assignment is complete.
 
-## Project Constrains
-This project shows how to restrict IAM access to a chosen Cloud Storage bucket. It’s not a full production security deployment.
+## Project Limitations
+This project demonstrates IAM access restrictions for a selected Cloud Storage bucket. It does not represent a complete production security deployment.
 
-You need to be authenticated and have the correct IAM permissions to access the Google Cloud Console dashboard.
+The Google Cloud Console dashboard requires authentication and appropriate IAM permissions.
 
-Verifying Cloud Audit Logs Using Google Cloud Logs Explorer. We retrieved a total of 26 relevant audit log entries including IAM policy operations, Cloud Storage permission updates, and service account access token creations. Availability of audit logs depends on the Google Cloud service and logging configuration.
+Cloud Audit Logs verification was completed using Google Cloud Logs Explorer. A total of 26 relevant audit log records were retrieved, including IAM policy operations, Cloud Storage permission updates, and service account access-token generation events. Audit log availability depends on the Google Cloud service and logging configuration.
 
-## Final thoughts
+## Conclusion
 
 This project successfully demonstrates how Google Cloud IAM and service accounts support the principle of least privilege.
 
-The IAM Reader could perform authorized read operations, but it could not upload objects. The IAM Writer was able to perform authorized storage operations
+The IAM Reader was able to perform authorized read operations but was prevented from uploading objects. The IAM Writer successfully performed authorized storage operations.
 
-The results illustrate the importance of assigning IAM permissions correctly to safeguard cloud resources against unauthorized access.
+These results demonstrate how carefully assigned IAM permissions help protect cloud resources from unauthorized access.
 
-The project also offers practical experience with cloud security setups, service account management, permission testing, and technical documentation.
+The project also provides practical experience with cloud security configuration, service account management, permission testing, and technical documentation.
 
-## Literaturverzeichnis
-- [Google Cloud IAM introduction](https://cloud.google.com/iam/docs/overview)
+## References
+
+- [Google Cloud IAM Overview](https://cloud.google.com/iam/docs/overview)
 - [IAM Roles and Permissions](https://cloud.google.com/iam/docs/understanding-roles)
-- [Service account overview](https://cloud.google.com/iam/docs/service-account-overview)
-- Cloud Storage IAM Roles https://cloud.google.com/storage/docs/access-control/iam-roles
-- [Impersonating Service Accounts](https://cloud.google.com/iam/docs/impersonating-service-accounts)
-- [Audit log overview](https://cloud.google.com/logging/docs/audit)
+- [Service Accounts Overview](https://cloud.google.com/iam/docs/service-account-overview)
+- [Cloud Storage IAM Roles](https://cloud.google.com/storage/docs/access-control/iam-roles)
+- [Service Account Impersonation](https://cloud.google.com/iam/docs/impersonating-service-accounts)
+- [Cloud Audit Logs Overview](https://cloud.google.com/logging/docs/audit)
