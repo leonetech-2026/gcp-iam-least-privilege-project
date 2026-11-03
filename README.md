@@ -10,6 +10,12 @@
 - **Architecture Diagram:** [View Security Architecture](https://github.com/leonetech-2026/gcp-iam-least-privilege-project/blob/main/diagram.png)
 - **Presentation Slides:** [View Project Presentation](https://docs.google.com/presentation/d/1xm9LhcoWYKnEH3b6ag9PGbShNFfTFLrX/edit?usp=sharing&ouid=102980885387166603628&rtpof=true&sd=true)
 
+**Google Cloud IAM Least Privilege: Security Implementation and Validation**
+
+This presentation covers the project architecture, IAM roles, access control testing, Cloud Audit Logs, automated security monitoring, and successful alert notification verification.
+
+[View Final Project Presentation](https://drive.google.com/file/d/1dHOrDgaNDZVOcr1eRNOgoF4o0ao28OG9/view?usp=sharing)
+
 **Note:** Google Cloud dashboard. Permissions Required This is not an app that is open to the public. Access to the presentation depends on sharing permissions on Google Drive.
 
 ## Project Overview
@@ -251,6 +257,111 @@ The results show the importance of properly configured IAM permissions to protec
 You also get hands-on experience with cloud security configuration, service account management, permission testing, and technical documentation writing.
 
 
+
+# October 2026 Security Hardening and Monitoring Update
+
+> **Update note:** The original README above is preserved verbatim as a historical record. Its references to the Writer having `roles/storage.objectUser`, read access, and the original seven tests describe the earlier configuration. The current verified Writer configuration is the custom `storageUploadListOperator` role with only `storage.objects.create` and `storage.objects.list`, as documented below. The original screenshots also represent earlier project stages.
+
+## Overview
+Demonstration of least-privilege access using separate Cloud Storage Reader and Writer service accounts, a narrowly scoped custom IAM role, keyless impersonation, audit logging, and an automated security alert.
+
+## Architecture
+```mermaid
+flowchart LR
+  A[Cloud Storage IAM policy change] --> B[Cloud Audit Logs]
+  B --> C[Log-based metric: iam_policy_changes]
+  C --> D[Cloud Monitoring threshold alert]
+  D --> E[Email notification]
+  F[Reader SA: objectViewer] --> G[GCS demonstration bucket]
+  H[Writer SA: custom create + list] --> G
+```
+
+## Roles and permissions
+| Identity | Bucket-level role | Intended access |
+|---|---|---|
+| `iam-reader@...` | `roles/storage.objectViewer` | Read/list |
+| `iam-writer@...` | `projects/gcp-iam-least-privilege/roles/storageUploadListOperator` | Create/list only |
+
+Custom role permissions: `storage.objects.create`, `storage.objects.list`. The previous Writer `roles/storage.objectUser` binding was removed. The bucket uses uniform bucket-level access and enforced public access prevention. Existing legacy Storage role bindings remain and warrant separate review.
+
+## Access-control test evidence
+| Test | Observed result |
+|---|---|
+| Writer uploads new object | Pass |
+| Writer lists objects | Pass |
+| Writer reads object | Denied: `storage.objects.get` (403) |
+| Writer deletion command | Denied due to missing `storage.objects.get`; **not direct proof of a delete-permission check** |
+| Reader uploads object | Denied: `storage.objects.create` (403) |
+
+## Monitoring
+
+**Metric selection in Google Cloud Monitoring**
+
+![Metric selection in Google Cloud Monitoring](./screenshots/monitoring/01-metric-selection-console.png)
+- Activity log filter: `log_id("cloudaudit.googleapis.com/activity") AND protoPayload.serviceName="storage.googleapis.com" AND protoPayload.methodName="storage.setIamPermissions"`
+- Metric: `logging.googleapis.com/user/iam_policy_changes`
+- Resource: `gcs_bucket`
+- Policy: `GCP Storage IAM Permission Change Alert` (enabled, Warning)
+- Threshold: 60-second `ALIGN_SUM`, greater than 0, no retest
+- Email channel: `GCP IAM Security Alerts`
+
+## Final alert validation
+
+**Confirmed firing warning alert in Google Cloud Monitoring**
+
+Controlled Reader Viewer removal and restoration produced `storage.setIamPermissions` entries at **2026-10-29 04:20:52 UTC** and **04:20:54 UTC**. The Reader permission was restored. Cloud Monitoring displayed a firing incident opened at **12:24:33 AM EDT**. Email delivery was confirmed by the user. A previous temporary test service account was deleted after its bucket access was revoked.
+
+## Troubleshooting lesson
+
+**Initial IAM Service Account resource selection**
+
+![Initial IAM Service Account resource selection](./screenshots/monitoring/02-incorrect-iam-resource-selection.png)
+
+**Initial alert chart showing no data**
+
+![Initial alert chart showing no data](./screenshots/monitoring/03-initial-metric-no-data.png)
+
+**Initial policy details before resource type correction**
+
+![Initial policy details before resource type correction](./screenshots/monitoring/06-initial-alert-policy-no-data.png)
+
+**Correct GCS Bucket resource and visible metric data**
+
+![Correct GCS Bucket resource and visible metric data](./screenshots/monitoring/07-correct-gcs-bucket-metric.png)
+The first alert policy used `resource.type = "iam_service_account"`, while metric time series were associated with `gcs_bucket`. Editing the existing policy to `resource.type = "gcs_bucket"` resolved the mismatch. A Cloud Monitoring REST API query was used to inspect metric time series after an unsupported `gcloud monitoring time-series` command failed.
+
+## Monitoring configuration screenshots
+
+The following screenshots document the alert setup and the corrected configuration. The earlier screenshots show the historical troubleshooting sequence, not the final resource selection.
+
+**Notification channel and alert documentation configuration**
+
+![Notification channel and alert documentation configuration](./screenshots/monitoring/04-alert-notification-settings.png)
+
+**Initial alert policy review screen**
+
+![Initial alert policy review screen](./screenshots/monitoring/05-alert-policy-review.png)
+
+**Notification settings after the resource type correction**
+
+![Notification settings after the resource type correction](./screenshots/monitoring/08-corrected-notification-settings.png)
+
+**Final alert policy review with GCS Bucket resource**
+
+![Final alert policy review with GCS Bucket resource](./screenshots/monitoring/09-corrected-alert-policy-review.png)
+
+## Verification commands
+```bash
+gcloud storage buckets get-iam-policy gs://gcp-iam-least-privilege-2026-demo --format=json
+
+gcloud logging read 'protoPayload.serviceName="storage.googleapis.com" AND protoPayload.methodName="storage.setIamPermissions"' --project=gcp-iam-least-privilege --freshness=30m --limit=10
+
+gcloud monitoring policies describe projects/gcp-iam-least-privilege/alertPolicies/10272523933954638925 --project=gcp-iam-least-privilege --format=json
+```
+
+## Scope and next steps
+This alert covers matching **Cloud Storage bucket IAM changes**, not all IAM activity. Expand monitoring to project IAM, service-account impersonation, and appropriate Data Access logs after reviewing cost and permissions. Preserve redacted screenshots of tests, alert incident, and notification email. Do not remove the sole project Owner or existing legacy bindings without a reviewed recovery plan.
+
 ## References
 
 - [Google Cloud IAM Overview](https://cloud.google.com/iam/docs/overview)
@@ -259,3 +370,6 @@ You also get hands-on experience with cloud security configuration, service acco
 - [Cloud Storage IAM Roles](https://cloud.google.com/storage/docs/access-control/iam-roles)
 - [Service Account Impersonation](https://cloud.google.com/iam/docs/impersonating-service-accounts)
 - [Cloud Audit Logs Overview](https://cloud.google.com/logging/docs/audit)
+
+---
+
